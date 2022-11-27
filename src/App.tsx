@@ -1,13 +1,9 @@
 import React from "react";
-import { StyledApp } from "./App.styled";
-import { Button } from "@mui/material";
+import { appRouter } from "./AppRouter";
+import { RouterProvider } from "react-router-dom";
 
 function App() {
-  return (
-    <StyledApp>
-      <Button variant="contained">Hello world!</Button>
-    </StyledApp>
-  );
+  return <RouterProvider router={appRouter} />;
 }
 
 export default App;
