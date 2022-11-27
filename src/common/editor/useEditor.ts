@@ -1,30 +1,25 @@
-import { EditorState } from "@codemirror/state";
-import { basicSetup } from "codemirror";
 import { javascript } from "@codemirror/lang-javascript";
-import { EditorView, keymap } from "@codemirror/view";
-import { defaultKeymap } from "@codemirror/commands";
+import { useEffect, useState } from "react";
+import { LanguageSupport } from "@codemirror/language";
+
+interface EditorConfig {
+  ready: boolean;
+  languages: LanguageSupport[];
+  defaultValue: string;
+}
 
 export const useEditor = () => {
-  let startState = EditorState.create({
-    doc: `function() {
-      console.log("Hello World");
-    }`,
-    extensions: [
-      EditorState.tabSize.of(16),
-      basicSetup,
-      keymap.of(defaultKeymap),
-      javascript(),
-    ],
+  const [editor, setEditor] = useState<EditorConfig>({
+    ready: false,
+    languages: [],
+    defaultValue: `// This is a test`,
   });
 
-  let view = new EditorView({
-    state: startState,
-    parent: document.body,
-  });
+  useEffect(() => {
+    const languages = [javascript()];
 
-  const editorHtml = {
-    __html: view.dom.innerHTML,
-  };
+    setEditor({ ...editor, ready: true, languages });
+  }, []);
 
-  return editorHtml;
+  return editor;
 };
