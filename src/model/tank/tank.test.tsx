@@ -3,9 +3,13 @@ import { getTank } from "./tank";
 import { thenCheckPosition, whenPushKey } from "../../test/helper";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../common/canvas/const";
 import {
+  TANK_GUN_HEIGHT,
+  TANK_GUN_WIDTH,
   TANK_HEIGHT,
   TANK_INITIAL_POSITION,
   TANK_SPEED,
+  TANK_TOWER_HEIGHT,
+  TANK_TOWER_WIDTH,
   TANK_WIDTH,
 } from "./const";
 
@@ -67,7 +71,7 @@ describe("Отрисовка и движения коруса танка", () =>
     const tank = await getTank();
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y);
-    tank.moveLeft(tank.position, TANK_SPEED);
+    tank.moveLeft(tank, TANK_SPEED);
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x - TANK_SPEED);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y);
   });
@@ -76,7 +80,7 @@ describe("Отрисовка и движения коруса танка", () =>
     const tank = await getTank();
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y);
-    tank.moveRight(tank.position, TANK_SPEED);
+    tank.moveRight(tank, TANK_SPEED);
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x + TANK_SPEED);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y);
   });
@@ -85,7 +89,7 @@ describe("Отрисовка и движения коруса танка", () =>
     const tank = await getTank();
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y);
-    tank.moveUp(tank.position, TANK_SPEED);
+    tank.moveUp(tank, TANK_SPEED);
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y - TANK_SPEED);
   });
@@ -94,7 +98,7 @@ describe("Отрисовка и движения коруса танка", () =>
     const tank = await getTank();
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y);
-    tank.moveDown(tank.position, TANK_SPEED);
+    tank.moveDown(tank, TANK_SPEED);
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y + TANK_SPEED);
   });
@@ -103,25 +107,10 @@ describe("Отрисовка и движения коруса танка", () =>
     const tank = await getTank();
     tank.initKeyboardListener();
     thenCheckPosition(tank, TANK_INITIAL_POSITION.x, TANK_INITIAL_POSITION.y);
-    whenPushKey("ArrowLeft");
-    thenCheckPosition(
-      tank,
-      TANK_INITIAL_POSITION.x - TANK_SPEED,
-      TANK_INITIAL_POSITION.y
-    );
-    whenPushKey("ArrowLeft");
-    thenCheckPosition(
-      tank,
-      TANK_INITIAL_POSITION.x - TANK_SPEED,
-      TANK_INITIAL_POSITION.y
-    );
-    whenPushKey("ArrowUp");
-    whenPushKey("ArrowUp");
-    thenCheckPosition(
-      tank,
-      TANK_INITIAL_POSITION.x - TANK_SPEED,
-      TANK_INITIAL_POSITION.y - TANK_SPEED
-    );
+    for (let i = 0; i < 100; i++) whenPushKey("ArrowLeft");
+    thenCheckPosition(tank, 0, TANK_INITIAL_POSITION.y);
+    for (let i = 0; i < 100; i++) whenPushKey("ArrowUp");
+    thenCheckPosition(tank, 0, 0);
   });
 
   it("Танк не должен выходить за пределы области вправо", async () => {
@@ -150,5 +139,57 @@ describe("Отрисовка и движения коруса танка", () =>
     );
   });
 });
+
+describe("Вот это Поворот корпуса танка", () => {});
+describe("Отрисовка башни танка", () => {
+  it("Башня должна быть размером 20x20", async () => {
+    const tankTower = (await getTank()).tower;
+    expect(tankTower.size.height).toBe(TANK_TOWER_HEIGHT);
+    expect(tankTower.size.width).toBe(TANK_TOWER_WIDTH);
+  });
+
+  it("Башня должна стоять в центре танка", async () => {
+    const tankTower = (await getTank()).tower;
+    expect(tankTower.position.x).toBe(
+      TANK_INITIAL_POSITION.x + (TANK_WIDTH / 2 - TANK_TOWER_WIDTH / 2)
+    );
+    expect(tankTower.position.y).toBe(
+      TANK_INITIAL_POSITION.y + (TANK_HEIGHT / 2 - TANK_TOWER_HEIGHT / 2)
+    );
+  });
+
+  it("У башни есть пушка и она торчит и она имеет размеры 5x20", async () => {
+    const tankTower = (await getTank()).tower;
+    expect(tankTower.gun).toBeDefined();
+
+    const gun = tankTower.gun;
+    expect(gun.size.height).toBe(TANK_GUN_HEIGHT);
+    expect(gun.size.width).toBe(TANK_GUN_WIDTH);
+
+    expect(gun.position.x).toBe(
+      tankTower.position.x + TANK_TOWER_WIDTH / 2 - TANK_GUN_WIDTH / 2
+    );
+    expect(gun.position.y).toBe(
+      tankTower.position.y - TANK_GUN_HEIGHT + TANK_TOWER_HEIGHT / 2
+    );
+  });
+
+  it("Башня и пушка двигается вместе с танком", async () => {
+    const tank = await getTank();
+
+    tank.moveDown(tank);
+
+    const newPositionTank = TANK_INITIAL_POSITION.y + TANK_SPEED;
+    const newPositionTower =
+      newPositionTank + (TANK_HEIGHT / 2 - TANK_TOWER_HEIGHT / 2);
+    const newPositionGun =
+      newPositionTower - TANK_GUN_HEIGHT + TANK_TOWER_HEIGHT / 2;
+    expect(tank.tower.position.y).toBe(newPositionTower);
+    expect(tank.tower.gun.position.y).toBe(newPositionGun);
+  });
+});
+describe("Поворот башни танка", () => {});
+describe("Отрисовка снаряда", () => {});
+describe("Движение снаряда", () => {});
 
 export {};
