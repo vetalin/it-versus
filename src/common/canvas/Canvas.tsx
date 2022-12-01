@@ -2,45 +2,13 @@ import React, { useEffect } from "react";
 import { CanvasStyled } from "./Canvas.styled";
 import { getTank } from "../../model/tank/tank";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "./const";
+import { getCanvas } from "../../model/canvas/canvas";
 
 export const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    (async () => {
-      const canvas = canvasRef.current;
-      if (!canvas) {
-        return;
-      }
-
-      canvas.width = CANVAS_WIDTH;
-      canvas.height = CANVAS_HEIGHT;
-
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        return;
-      }
-
-      const tank = await getTank();
-      tank.initKeyboardListener();
-
-      window.setInterval(() => {
-        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-        ctx.rect(
-          tank.position.x,
-          tank.position.y,
-          tank.size.width,
-          tank.size.height
-        );
-        ctx.fillRect(
-          tank.position.x,
-          tank.position.y,
-          tank.size.width,
-          tank.size.height
-        );
-      }, 1000 / 60);
-    })();
+    getCanvas(canvasRef.current);
   }, [canvasRef]);
 
   return <CanvasStyled ref={canvasRef} />;

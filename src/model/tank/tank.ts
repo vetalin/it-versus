@@ -13,6 +13,7 @@ import {
   Size,
   Tank,
 } from "./interface";
+import { getTankTower } from "./tankTower";
 
 export const getTank = async (): Promise<Tank> => {
   const size: Size = { width: TANK_WIDTH, height: TANK_HEIGHT };
@@ -21,15 +22,10 @@ export const getTank = async (): Promise<Tank> => {
     y: TANK_INITIAL_POSITION.y,
   };
 
-  // const imageSrc = require('../../../assets/tank.png');
-  // const image = new Image(size.width, size.height);
-  // image.src = imageSrc;
-
-  // const imageBitmap = await createImageBitmap(image, position.x, position.y, size.width, size.height);
-
   const moveTank =
     (flow: MoveArrowsKeys): MoveTankFn =>
-    (tankCurrentPosition: Position, step = TANK_SPEED) => {
+    (tank: Tank, step = TANK_SPEED) => {
+      let { position: tankCurrentPosition } = tank;
       switch (flow) {
         case "ArrowLeft":
           tankCurrentPosition.x -= step;
@@ -56,15 +52,16 @@ export const getTank = async (): Promise<Tank> => {
           }
           break;
       }
+      tank.tower = getTankTower(size, tankCurrentPosition);
     };
 
   const initKeyboardListener: KeyboardListenerFn = (): void => {
     document.addEventListener("keydown", (event: KeyboardEvent) => {
-      moveTank(event.key as MoveArrowsKeys)(position);
+      moveTank(event.key as MoveArrowsKeys)(tank);
     });
   };
 
-  return {
+  const tank = {
     image: true,
     size,
     position,
@@ -73,5 +70,8 @@ export const getTank = async (): Promise<Tank> => {
     moveUp: moveTank("ArrowUp"),
     moveDown: moveTank("ArrowDown"),
     initKeyboardListener,
+    tower: getTankTower(size, position),
   };
+
+  return tank;
 };

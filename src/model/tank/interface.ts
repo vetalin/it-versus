@@ -13,7 +13,7 @@ export type MoveArrowsKeys =
   | "ArrowRight"
   | "ArrowUp"
   | "ArrowDown";
-export type MoveTankFn = (tankCurrentPosition: Position, step?: number) => void;
+export type MoveTankFn = (tank: Tank, step?: number) => void;
 
 export type KeyboardListenerFn = () => void;
 
@@ -21,9 +21,21 @@ export interface Tank {
   size: Size;
   position: Position;
   image: boolean;
+  tower: TankTower;
   moveRight: MoveTankFn;
   moveLeft: MoveTankFn;
   moveUp: MoveTankFn;
   moveDown: MoveTankFn;
   initKeyboardListener: KeyboardListenerFn;
+}
+
+export interface TankTower {
+  size: Size;
+  position: Position;
+  gun: TankGun;
+}
+
+export interface TankGun {
+  size: Size;
+  position: Position;
 }
