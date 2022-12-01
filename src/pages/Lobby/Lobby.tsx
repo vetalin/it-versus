@@ -6,8 +6,8 @@ import { Canvas } from "../../common/canvas/Canvas";
 export const Lobby = () => {
   return (
     <LobbyStyled>
-        <Editor />
-        <Canvas />
+      <Editor />
+      <Canvas />
     </LobbyStyled>
   );
 };
