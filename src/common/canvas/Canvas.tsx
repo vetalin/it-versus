@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { CanvasStyled } from "./Canvas.styled";
 import { getTank } from "../../model/tank/tank";
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from "./const";
 
 export const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -12,8 +13,8 @@ export const Canvas = () => {
         return;
       }
 
-      canvas.width = 800;
-      canvas.height = 500;
+      canvas.width = CANVAS_WIDTH;
+      canvas.height = CANVAS_HEIGHT;
 
       const ctx = canvas.getContext("2d");
       if (!ctx) {
@@ -24,7 +25,7 @@ export const Canvas = () => {
       tank.initKeyboardListener();
 
       window.setInterval(() => {
-        ctx.clearRect(0, 0, 800, 500);
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         ctx.rect(
           tank.position.x,

@@ -8,10 +8,12 @@ export interface Position {
   y: number;
 }
 
-export type MoveRightFn = (tankCurrentPosition: Position, step: number) => void;
-export type MoveLeftFn = (tankCurrentPosition: Position, step: number) => void;
-export type MoveUpFn = (tankCurrentPosition: Position, step: number) => void;
-export type MoveDownFn = (tankCurrentPosition: Position, step: number) => void;
+export type MoveArrowsKeys =
+  | "ArrowLeft"
+  | "ArrowRight"
+  | "ArrowUp"
+  | "ArrowDown";
+export type MoveTankFn = (tankCurrentPosition: Position, step?: number) => void;
 
 export type KeyboardListenerFn = () => void;
 
@@ -19,9 +21,9 @@ export interface Tank {
   size: Size;
   position: Position;
   image: boolean;
-  moveRight: MoveRightFn;
-  moveLeft: MoveLeftFn;
-  moveUp: MoveUpFn;
-  moveDown: MoveDownFn;
+  moveRight: MoveTankFn;
+  moveLeft: MoveTankFn;
+  moveUp: MoveTankFn;
+  moveDown: MoveTankFn;
   initKeyboardListener: KeyboardListenerFn;
 }
