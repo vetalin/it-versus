@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { CanvasStyled } from "./Canvas.styled";
-import { getTank } from "./model/tank";
+import { getTank } from "../../model/tank/tank";
 
 export const Canvas = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);

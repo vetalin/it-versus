@@ -1,30 +1,13 @@
-interface Size {
-  width: number;
-  height: number;
-}
-
-interface Position {
-  x: number;
-  y: number;
-}
-
-type MoveRightFn = (tankCurrentPosition: Position, step: number) => void;
-type MoveLeftFn = (tankCurrentPosition: Position, step: number) => void;
-type MoveUpFn = (tankCurrentPosition: Position, step: number) => void;
-type MoveDownFn = (tankCurrentPosition: Position, step: number) => void;
-
-type KeyboardListenerFn = () => void;
-
-export interface Tank {
-  size: Size;
-  position: Position;
-  image: boolean;
-  moveRight: MoveRightFn;
-  moveLeft: MoveLeftFn;
-  moveUp: MoveUpFn;
-  moveDown: MoveDownFn;
-  initKeyboardListener: KeyboardListenerFn;
-}
+import {
+  KeyboardListenerFn,
+  MoveDownFn,
+  MoveLeftFn,
+  MoveRightFn,
+  MoveUpFn,
+  Position,
+  Size,
+  Tank,
+} from "./interface";
 
 export const getTank = async (): Promise<Tank> => {
   const size: Size = { width: 50, height: 50 };
