@@ -118,7 +118,7 @@ describe('Отрисовка канваса', () => {
         whenPushKey('ArrowUp')
         whenPushKey('ArrowUp')
         thenCheckPosition(tank, 0, 0);
-    })
+    });
     
 });
 
