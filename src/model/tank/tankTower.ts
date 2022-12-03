@@ -12,9 +12,15 @@ export const getTankTower = (
     y: tankPosition.y + (tankSize.height / 2 - TANK_TOWER_HEIGHT / 2),
   };
 
+  const getAngle = (startAngleTime: number): number => {
+    return Date.now() - startAngleTime + 1;
+  };
+
   return {
     size,
     position,
     gun: getTankGun(size, position),
+    angle: 0,
+    getAngle,
   };
 };

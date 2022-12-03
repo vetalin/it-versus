@@ -15,12 +15,11 @@ export const getCanvas = async (canvasRef: HTMLCanvasElement | null) => {
     return;
   }
 
-  const tank = await getTank();
-  tank.initKeyboardListener();
+  const { tank, initKeyboardListener, tankGameLoop } = await getTank();
+  initKeyboardListener();
 
   const gameLoop = () => {
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
     ctx.fillStyle = "black";
     ctx.fillRect(
       tank.position.x,
@@ -30,12 +29,24 @@ export const getCanvas = async (canvasRef: HTMLCanvasElement | null) => {
     );
 
     ctx.fillStyle = "red";
-    ctx.fillRect(
+    const tower = ctx.fillRect(
       tank.tower.position.x,
       tank.tower.position.y,
       tank.tower.size.width,
       tank.tower.size.height
     );
+
+    if (tank.tower.angle > 0) {
+      ctx.translate(
+        tank.tower.position.x + tank.tower.size.width / 2,
+        tank.tower.position.y + tank.tower.size.height / 2
+      );
+      ctx.rotate((tank.tower.angle * Math.PI) / 360);
+      ctx.translate(
+        -(tank.tower.position.x + tank.tower.size.width / 2),
+        -(tank.tower.position.y + tank.tower.size.height / 2)
+      );
+    }
 
     ctx.fillStyle = "#888888";
     ctx.fillRect(
@@ -54,6 +65,8 @@ export const getCanvas = async (canvasRef: HTMLCanvasElement | null) => {
         tank.bullet.size.height
       );
     }
+
+    tankGameLoop();
 
     window.requestAnimationFrame(gameLoop);
   };

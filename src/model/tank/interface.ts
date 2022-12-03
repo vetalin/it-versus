@@ -8,11 +8,14 @@ export interface Position {
   y: number;
 }
 
+export type ComputeBulletPosition = (gun: TankGun, bullet: Bullet) => Position;
+
 export interface Bullet {
   size: Size;
   position: Position;
   visible: boolean;
   fireStartTime: number;
+  getBulletPostionAfterFire: ComputeBulletPosition;
 }
 
 export type MoveArrowsKeys =
@@ -34,13 +37,20 @@ export interface Tank {
   moveLeft: MoveTankFn;
   moveUp: MoveTankFn;
   moveDown: MoveTankFn;
+}
+
+export interface TankWithActions {
+  tank: Tank;
   initKeyboardListener: KeyboardListenerFn;
+  tankGameLoop: () => void;
 }
 
 export interface TankTower {
   size: Size;
   position: Position;
   gun: TankGun;
+  angle: number;
+  getAngle: (start: number) => number;
 }
 
 export interface TankGun {

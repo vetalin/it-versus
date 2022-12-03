@@ -14,33 +14,34 @@ import {
   TANK_TOWER_WIDTH,
   TANK_WIDTH,
 } from "./const";
+import { wait } from "@testing-library/user-event/dist/utils";
 
-describe("Отрисовка и движения коруса танка", () => {
+describe("Отрисовка и движения корпуса танка", () => {
   it("На холсте есть танк", async () => {
-    const tank = await getTank();
+    const { tank } = await getTank();
     expect(tank).toBeTruthy();
   });
 
   it("У танка есть текстура", async () => {
-    const tank = await getTank();
+    const { tank } = await getTank();
     expect(tank.image).toBeTruthy();
   });
 
   it("Танк имеет размеры 50x50", async () => {
-    const tank = await getTank();
+    const { tank } = await getTank();
     expect(tank.size.width).toBe(TANK_WIDTH);
     expect(tank.size.height).toBe(TANK_HEIGHT);
   });
 
   it("Танк имеет координаты 10x10", async () => {
-    const tank = await getTank();
+    const { tank } = await getTank();
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y);
   });
 
   it("Когда я нажимаю клавиши на клавиатуре (влево вправо вверх вниз, то танк двигается)", async () => {
-    const tank = await getTank();
-    tank.initKeyboardListener();
+    const { tank, initKeyboardListener } = await getTank();
+    initKeyboardListener();
 
     thenCheckPosition(tank, TANK_INITIAL_POSITION.x, TANK_INITIAL_POSITION.y);
 
@@ -70,7 +71,7 @@ describe("Отрисовка и движения коруса танка", () =>
   });
 
   it("Танк должен двигаться влево, если я нажимаю левую кнопку", async () => {
-    const tank = await getTank();
+    const { tank } = await getTank();
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y);
     tank.moveLeft(tank, TANK_SPEED);
@@ -79,7 +80,7 @@ describe("Отрисовка и движения коруса танка", () =>
   });
 
   it("Танк должен двигаться вправо, если я нажимаю вправо кнопку", async () => {
-    const tank = await getTank();
+    const { tank } = await getTank();
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y);
     tank.moveRight(tank, TANK_SPEED);
@@ -88,7 +89,7 @@ describe("Отрисовка и движения коруса танка", () =>
   });
 
   it("Танк должен двигаться вверх, если я нажимаю кнопку вверх", async () => {
-    const tank = await getTank();
+    const { tank } = await getTank();
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y);
     tank.moveUp(tank, TANK_SPEED);
@@ -97,7 +98,7 @@ describe("Отрисовка и движения коруса танка", () =>
   });
 
   it("Танк должен двигаться вниз, если я нажимаю кнопку вниз", async () => {
-    const tank = await getTank();
+    const { tank } = await getTank();
     expect(tank.position.x).toBe(TANK_INITIAL_POSITION.x);
     expect(tank.position.y).toBe(TANK_INITIAL_POSITION.y);
     tank.moveDown(tank, TANK_SPEED);
@@ -106,8 +107,8 @@ describe("Отрисовка и движения коруса танка", () =>
   });
 
   it("Танк не должен выходить за пределы области влево и вверх", async () => {
-    const tank = await getTank();
-    tank.initKeyboardListener();
+    const { tank, initKeyboardListener } = await getTank();
+    initKeyboardListener();
     thenCheckPosition(tank, TANK_INITIAL_POSITION.x, TANK_INITIAL_POSITION.y);
     for (let i = 0; i < 100; i++) whenPushKey("ArrowLeft");
     thenCheckPosition(tank, 0, TANK_INITIAL_POSITION.y);
@@ -116,8 +117,8 @@ describe("Отрисовка и движения коруса танка", () =>
   });
 
   it("Танк не должен выходить за пределы области вправо", async () => {
-    const tank = await getTank();
-    tank.initKeyboardListener();
+    const { tank, initKeyboardListener } = await getTank();
+    initKeyboardListener();
 
     thenCheckPosition(tank, TANK_INITIAL_POSITION.x, TANK_INITIAL_POSITION.y);
     for (let i = 0; i < Math.floor(CANVAS_WIDTH / (TANK_SPEED / 2)); i++) {
@@ -127,8 +128,8 @@ describe("Отрисовка и движения коруса танка", () =>
   });
 
   it("Танк не должен выходить за пределы области вниз", async () => {
-    const tank = await getTank();
-    tank.initKeyboardListener();
+    const { tank, initKeyboardListener } = await getTank();
+    initKeyboardListener();
 
     thenCheckPosition(tank, TANK_INITIAL_POSITION.x, TANK_INITIAL_POSITION.y);
     for (let i = 0; i < Math.floor(CANVAS_HEIGHT / (TANK_SPEED / 2)); i++) {
@@ -146,13 +147,13 @@ describe("Вот это Поворот корпуса танка", () => {});
 
 describe("Отрисовка башни танка", () => {
   it("Башня должна быть размером 20x20", async () => {
-    const tankTower = (await getTank()).tower;
+    const tankTower = (await getTank()).tank.tower;
     expect(tankTower.size.height).toBe(TANK_TOWER_HEIGHT);
     expect(tankTower.size.width).toBe(TANK_TOWER_WIDTH);
   });
 
   it("Башня должна стоять в центре танка", async () => {
-    const tankTower = (await getTank()).tower;
+    const tankTower = (await getTank()).tank.tower;
     expect(tankTower.position.x).toBe(
       TANK_INITIAL_POSITION.x + (TANK_WIDTH / 2 - TANK_TOWER_WIDTH / 2)
     );
@@ -162,7 +163,7 @@ describe("Отрисовка башни танка", () => {
   });
 
   it("У башни есть пушка и она торчит и она имеет размеры 5x20", async () => {
-    const tankTower = (await getTank()).tower;
+    const tankTower = (await getTank()).tank.tower;
     expect(tankTower.gun).toBeDefined();
 
     const gun = tankTower.gun;
@@ -178,7 +179,7 @@ describe("Отрисовка башни танка", () => {
   });
 
   it("Башня и пушка двигается вместе с танком", async () => {
-    const tank = await getTank();
+    const { tank } = await getTank();
 
     tank.moveDown(tank);
 
@@ -196,13 +197,14 @@ describe("Поворот башни танка", () => {});
 
 describe("Отрисовка снаряда", () => {
   it("Размер снаряда как в константах", async () => {
-    const tank = await getTank();
+    const { tank } = await getTank();
     expect(tank.bullet.size.width).toBe(TANK_BULLET_WIDTH);
     expect(tank.bullet.size.height).toBe(TANK_BULLET_HEIGHT);
   });
 
   it("Снаряд должен появляться по нажатию на пробел", async () => {
-    const tank = await getTank();
+    const { tank, initKeyboardListener } = await getTank();
+    initKeyboardListener();
 
     expect(tank.bullet.visible).toBe(false);
     whenPushKey("Space");
@@ -210,8 +212,16 @@ describe("Отрисовка снаряда", () => {
   });
 
   it("Снаряд должен лететь вверх", async () => {
-    const tank = await getTank();
+    const { tank, initKeyboardListener, tankGameLoop } = await getTank();
+    initKeyboardListener();
+    const gameLoop = () => {
+      tankGameLoop();
+      window.requestAnimationFrame(gameLoop);
+    };
+    window.requestAnimationFrame(gameLoop);
+
     whenPushKey("Space");
+    await wait(500);
     expect(tank.bullet.position.x).toBe(tank.tower.gun.position.x);
     expect(tank.bullet.position.y).toBeLessThan(
       tank.tower.gun.position.y - TANK_BULLET_HEIGHT
