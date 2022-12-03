@@ -18,15 +18,8 @@ export const getCanvas = async (canvasRef: HTMLCanvasElement | null) => {
   const tank = await getTank();
   tank.initKeyboardListener();
 
-  window.setInterval(() => {
+  const gameLoop = () => {
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-    ctx.rect(
-      tank.position.x,
-      tank.position.y,
-      tank.size.width,
-      tank.size.height
-    );
 
     ctx.fillStyle = "black";
     ctx.fillRect(
@@ -36,12 +29,6 @@ export const getCanvas = async (canvasRef: HTMLCanvasElement | null) => {
       tank.size.height
     );
 
-    ctx.rect(
-      tank.tower.position.x,
-      tank.tower.position.y,
-      tank.tower.size.width,
-      tank.tower.size.height
-    );
     ctx.fillStyle = "red";
     ctx.fillRect(
       tank.tower.position.x,
@@ -50,12 +37,6 @@ export const getCanvas = async (canvasRef: HTMLCanvasElement | null) => {
       tank.tower.size.height
     );
 
-    ctx.rect(
-      tank.tower.gun.position.x,
-      tank.tower.gun.position.y,
-      tank.tower.gun.size.width,
-      tank.tower.gun.size.height
-    );
     ctx.fillStyle = "#888888";
     ctx.fillRect(
       tank.tower.gun.position.x,
@@ -63,5 +44,19 @@ export const getCanvas = async (canvasRef: HTMLCanvasElement | null) => {
       tank.tower.gun.size.width,
       tank.tower.gun.size.height
     );
-  }, 1000 / 60);
+
+    if (tank.bullet.visible) {
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(
+        tank.bullet.position.x,
+        tank.bullet.position.y,
+        tank.bullet.size.width,
+        tank.bullet.size.height
+      );
+    }
+
+    window.requestAnimationFrame(gameLoop);
+  };
+
+  window.requestAnimationFrame(gameLoop);
 };

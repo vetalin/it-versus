@@ -13,3 +13,7 @@ export const TANK_TOWER_HEIGHT = 20;
 
 export const TANK_GUN_HEIGHT = 50;
 export const TANK_GUN_WIDTH = 5;
+
+export const TANK_BULLET_WIDTH = 5;
+export const TANK_BULLET_HEIGHT = 7;
+export const TANK_BULLET_SPEED = 3;

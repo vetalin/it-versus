@@ -8,6 +8,13 @@ export interface Position {
   y: number;
 }
 
+export interface Bullet {
+  size: Size;
+  position: Position;
+  visible: boolean;
+  fireStartTime: number;
+}
+
 export type MoveArrowsKeys =
   | "ArrowLeft"
   | "ArrowRight"
@@ -18,6 +25,7 @@ export type MoveTankFn = (tank: Tank, step?: number) => void;
 export type KeyboardListenerFn = () => void;
 
 export interface Tank {
+  bullet: Bullet;
   size: Size;
   position: Position;
   image: boolean;

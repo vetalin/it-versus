@@ -1,18 +1,13 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../common/canvas/const";
-import {
-  TANK_HEIGHT,
-  TANK_INITIAL_POSITION,
-  TANK_SPEED,
-  TANK_WIDTH,
-} from "./const";
+import { TANK_HEIGHT, TANK_INITIAL_POSITION, TANK_WIDTH } from "./const";
 import {
   KeyboardListenerFn,
   MoveArrowsKeys,
-  MoveTankFn,
   Position,
   Size,
   Tank,
 } from "./interface";
+import { moveTank } from "./moveTank";
+import { getBullet } from "./tankBullet";
 import { getTankTower } from "./tankTower";
 
 export const getTank = async (): Promise<Tank> => {
@@ -22,44 +17,22 @@ export const getTank = async (): Promise<Tank> => {
     y: TANK_INITIAL_POSITION.y,
   };
 
-  const moveTank =
-    (flow: MoveArrowsKeys): MoveTankFn =>
-    (tank: Tank, step = TANK_SPEED) => {
-      let { position: tankCurrentPosition } = tank;
-      switch (flow) {
-        case "ArrowLeft":
-          tankCurrentPosition.x -= step;
-          if (tankCurrentPosition.x < 0) {
-            tankCurrentPosition.x = 0;
-          }
-          break;
-        case "ArrowRight":
-          tankCurrentPosition.x += step;
-          if (tankCurrentPosition.x > CANVAS_WIDTH - TANK_WIDTH) {
-            tankCurrentPosition.x = CANVAS_WIDTH - TANK_WIDTH;
-          }
-          break;
-        case "ArrowUp":
-          tankCurrentPosition.y -= step;
-          if (tankCurrentPosition.y < 0) {
-            tankCurrentPosition.y = 0;
-          }
-          break;
-        case "ArrowDown":
-          tankCurrentPosition.y += step;
-          if (tankCurrentPosition.y > CANVAS_HEIGHT - TANK_HEIGHT) {
-            tankCurrentPosition.y = CANVAS_HEIGHT - TANK_HEIGHT;
-          }
-          break;
-      }
-      tank.tower = getTankTower(size, tankCurrentPosition);
-    };
-
   const initKeyboardListener: KeyboardListenerFn = (): void => {
     document.addEventListener("keydown", (event: KeyboardEvent) => {
-      moveTank(event.key as MoveArrowsKeys)(tank);
+      moveTank(event.code as MoveArrowsKeys)(tank);
+    });
+
+    document.addEventListener("keydown", (event: KeyboardEvent) => {
+      if (event.code === "Space") {
+        console.log("space");
+        tank.bullet.visible = true;
+        tank.bullet.fireStartTime = Date.now();
+      }
     });
   };
+
+  const tower = getTankTower(size, position);
+  const bullet = getBullet(tower.gun);
 
   const tank = {
     image: true,
@@ -70,7 +43,8 @@ export const getTank = async (): Promise<Tank> => {
     moveUp: moveTank("ArrowUp"),
     moveDown: moveTank("ArrowDown"),
     initKeyboardListener,
-    tower: getTankTower(size, position),
+    tower,
+    bullet,
   };
 
   return tank;

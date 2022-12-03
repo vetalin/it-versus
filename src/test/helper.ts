@@ -6,7 +6,7 @@ export const thenCheckPosition = (tank: Tank, x: number, y: number) => {
 };
 
 export const whenPushKey = (
-  key: "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown"
+  key: "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown" | "Space"
 ) => {
   document.dispatchEvent(new KeyboardEvent("keydown", { key }));
 };

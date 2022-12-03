@@ -3,6 +3,8 @@ import { getTank } from "./tank";
 import { thenCheckPosition, whenPushKey } from "../../test/helper";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../common/canvas/const";
 import {
+  TANK_BULLET_HEIGHT,
+  TANK_BULLET_WIDTH,
   TANK_GUN_HEIGHT,
   TANK_GUN_WIDTH,
   TANK_HEIGHT,
@@ -141,6 +143,7 @@ describe("Отрисовка и движения коруса танка", () =>
 });
 
 describe("Вот это Поворот корпуса танка", () => {});
+
 describe("Отрисовка башни танка", () => {
   it("Башня должна быть размером 20x20", async () => {
     const tankTower = (await getTank()).tower;
@@ -188,8 +191,38 @@ describe("Отрисовка башни танка", () => {
     expect(tank.tower.gun.position.y).toBe(newPositionGun);
   });
 });
+
 describe("Поворот башни танка", () => {});
-describe("Отрисовка снаряда", () => {});
-describe("Движение снаряда", () => {});
+
+describe("Отрисовка снаряда", () => {
+  it("Размер снаряда как в константах", async () => {
+    const tank = await getTank();
+    expect(tank.bullet.size.width).toBe(TANK_BULLET_WIDTH);
+    expect(tank.bullet.size.height).toBe(TANK_BULLET_HEIGHT);
+  });
+
+  it("Снаряд должен появляться по нажатию на пробел", async () => {
+    const tank = await getTank();
+
+    expect(tank.bullet.visible).toBe(false);
+    whenPushKey("Space");
+    expect(tank.bullet.visible).toBe(true);
+  });
+
+  it("Снаряд должен лететь вверх", async () => {
+    const tank = await getTank();
+    whenPushKey("Space");
+    expect(tank.bullet.position.x).toBe(tank.tower.gun.position.x);
+    expect(tank.bullet.position.y).toBeLessThan(
+      tank.tower.gun.position.y - TANK_BULLET_HEIGHT
+    );
+  });
+
+  it("Снаряд должен исчезать", () => {});
+});
+
+describe("Отрисовка врага", () => {});
+
+describe("Попадание снаряда во врага", () => {});
 
 export {};
